@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adimensa | Levantamentos</title>
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#E4EAF1; --paper-2:#D3DCE7; --face:#F8FAFC;
+    --ink:#0C2A4D; --ink-2:#3F5C7E;
+    --blue:#1B6FC0; --cyan:#43B0F1;
+    --rule:rgba(12,42,77,.14); --grid:rgba(27,111,192,.16);
+    --ok:#1E7A46; --aviso:#9A6700;
+    --display:"Archivo",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    min-height:100dvh; background:var(--paper); color:var(--ink);
+    font-family:var(--display);
+    display:flex; justify-content:center;
+    padding:clamp(28px,5vh,60px) clamp(16px,4vw,40px) 64px;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:34px 34px;
+  }
+  .folha{width:100%;max-width:860px}
+
+  /* ---------- cabeçalho ---------- */
+  .marca{display:flex;align-items:baseline;gap:11px;margin-bottom:6px}
+  .marca .nome{font-weight:800;font-size:19px;letter-spacing:.30em;
+    text-transform:uppercase;color:var(--ink)}
+  .marca .lema{font-family:var(--mono);font-size:10px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--ink-2)}
+  h1{font-size:clamp(22px,3.6vw,29px);font-weight:600;letter-spacing:-.015em;margin:16px 0 5px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.30em;
+    text-transform:uppercase;color:var(--ink-2);
+    display:flex;align-items:center;gap:11px;margin-bottom:26px}
+  .eyebrow::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+  .cota{display:flex;align-items:center;gap:10px;margin:24px 0 12px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--ink-2)}
+  .cota::before{content:"";width:9px;height:7px;flex:0 0 auto;
+    border-left:1px solid var(--ink-2);border-top:1px solid var(--ink-2);
+    border-bottom:1px solid var(--ink-2)}
+  .cota::after{content:"";flex:1;height:1px;background:var(--rule)}
+  .cota .conta{letter-spacing:.1em;color:var(--blue)}
+
+  /* ---------- busca ---------- */
+  .busca{position:relative;margin-bottom:14px}
+  .busca input{
+    width:100%;background:#fff;color:var(--ink);
+    border:1px solid rgba(12,42,77,.16);border-radius:3px;
+    padding:11px 13px;font-family:var(--display);font-size:14.5px;
+  }
+  .busca input:focus{outline:2px solid var(--cyan);outline-offset:1px;border-color:var(--blue)}
+
+  /* ---------- lista de plantas ---------- */
+  .plantas{display:grid;gap:10px}
+  .planta{
+    display:flex;align-items:center;gap:16px;
+    background:var(--face);border:1px solid rgba(12,42,77,.16);border-radius:4px;
+    padding:15px 18px;text-decoration:none;color:inherit;
+    box-shadow:0 1px 0 rgba(255,255,255,.9) inset;
+    transition:border-color .16s, transform .16s;
+  }
+  .planta:hover{border-color:var(--blue);transform:translateX(2px)}
+  .planta:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  .planta .selo{
+    flex:0 0 auto;width:38px;height:38px;border-radius:3px;
+    border:1px solid var(--rule);background:var(--paper-2);
+    display:grid;place-content:center;
+    font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--ink-2);
+  }
+  .planta .corpo{flex:1;min-width:0}
+  .planta .titulo{font-size:16px;font-weight:600;letter-spacing:-.01em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .planta .dados{font-family:var(--mono);font-size:11px;color:var(--ink-2);margin-top:3px}
+  .planta .dados b{color:var(--ink);font-weight:500}
+  .planta .marca-nuvem{color:var(--blue)}
+  .planta .sem-nuvem{color:var(--aviso)}
+  .planta .abrir{font-family:var(--mono);font-size:16px;color:var(--blue);flex:0 0 auto}
+
+  /* ---------- estados ---------- */
+  .recado{
+    font-family:var(--mono);font-size:12.5px;line-height:1.65;padding:14px 16px;
+    border-left:2px solid var(--blue);background:rgba(27,111,192,.07);
+    border-radius:0 3px 3px 0;
+  }
+  .recado code{background:rgba(12,42,77,.07);padding:1px 5px;border-radius:2px}
+
+  .acoes{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+  a.botao{
+    flex:1;min-width:210px;text-align:center;text-decoration:none;
+    background:var(--ink);color:#F2F7FC;border-radius:3px;padding:14px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;
+  }
+  a.botao:hover{background:var(--blue)}
+  a.botao.calmo{background:transparent;color:var(--ink-2);
+    border:1px solid rgba(12,42,77,.16)}
+  a.botao.calmo:hover{color:var(--blue);border-color:var(--blue);background:var(--face)}
+
+  footer{margin-top:30px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-2);text-align:center}
+  [hidden]{display:none !important}
+
+  @media (max-width:560px){
+    .planta{gap:12px;padding:13px 14px}
+    .planta .selo{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="folha">
+
+  <div class="marca">
+    <span class="nome">Adimensa</span>
+    <span class="lema">Access the Immense</span>
+  </div>
+
+  <h1>Levantamentos</h1>
+  <p class="eyebrow">nuvens de pontos e panorâmicas navegáveis</p>
+
+  <p class="cota">Publicados <span class="conta" id="conta"></span></p>
+
+  <div class="busca" id="caixa-busca" hidden>
+    <input type="text" id="busca" placeholder="filtrar por nome…" autocomplete="off">
+  </div>
+
+  <div class="plantas" id="plantas"></div>
+
+  <div id="vazio" hidden>
+    <div class="recado">
+      Nenhum levantamento publicado ainda. Abra o portal de publicação, informe o
+      nome da planta e escolha o arquivo E57 — o processo roda sozinho e a planta
+      aparece aqui ao terminar.
+    </div>
+  </div>
+
+  <div id="sem-indice" hidden>
+    <div class="recado">
+      Não encontrei <code>plantas.json</code> nesta pasta. Ele é criado
+      automaticamente na primeira publicação feita pelo portal. Se você publicou
+      pela linha de comando, os levantamentos existem mas não aparecem nesta
+      lista — o link direto continua sendo <code>pasta-da-planta/index.html</code>.
+    </div>
+  </div>
+
+  <div class="acoes">
+    <a class="botao" id="link-portal" href="http://127.0.0.1:8800">publicar levantamento</a>
+    <a class="botao calmo" href="http://www.adimensa.com.br/" target="_blank"
+       rel="noopener">adimensa.com.br</a>
+  </div>
+
+  <footer>Adimensa &middot; publicação de levantamentos</footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  let plantas = [];
+
+  function humano(n) {
+    const u = ["B", "KB", "MB", "GB", "TB"];
+    let i = 0;
+    while (n >= 1024 && i < 4) { n /= 1024; i++; }
+    return n.toFixed(n >= 10 || i === 0 ? 0 : 1) + " " + u[i];
+  }
+
+  function dataCurta(texto) {
+    // "2026-08-25 14:32" -> "25/08/2026"
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(texto || "");
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : (texto || "");
+  }
+
+  function desenhar(lista) {
+    const alvo = $("plantas");
+    alvo.textContent = "";
+
+    for (const p of lista) {
+      const cartao = document.createElement("a");
+      cartao.className = "planta";
+      cartao.href = p.apelido + "/index.html";
+
+      const selo = document.createElement("div");
+      selo.className = "selo";
+      selo.textContent = p.nuvem ? "3D" : "360";
+
+      const corpo = document.createElement("div");
+      corpo.className = "corpo";
+
+      const titulo = document.createElement("div");
+      titulo.className = "titulo";
+      titulo.textContent = p.nome || p.apelido;
+
+      const dados = document.createElement("div");
+      dados.className = "dados";
+      const partes = [];
+      if (p.estacoes) partes.push(`<b>${p.estacoes}</b> bolhas`);
+      partes.push(p.nuvem
+        ? '<span class="marca-nuvem">com nuvem</span>'
+        : '<span class="sem-nuvem">sem nuvem</span>');
+      if (p.tamanho) partes.push(humano(p.tamanho));
+      if (p.quando) partes.push(dataCurta(p.quando));
+      dados.innerHTML = partes.join("  ·  ");
+
+      const abrir = document.createElement("div");
+      abrir.className = "abrir";
+      abrir.textContent = "→";
+
+      corpo.append(titulo, dados);
+      cartao.append(selo, corpo, abrir);
+      alvo.appendChild(cartao);
+    }
+
+    $("conta").textContent = lista.length
+      ? String(lista.length).padStart(2, "0")
+      : "";
+  }
+
+  function filtrar() {
+    const termo = $("busca").value.trim().toLowerCase();
+    if (!termo) return desenhar(plantas);
+    desenhar(plantas.filter((p) =>
+      (p.nome || "").toLowerCase().includes(termo) ||
+      (p.apelido || "").toLowerCase().includes(termo)));
+  }
+
+  fetch("plantas.json", { cache: "no-store" })
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then((d) => {
+      plantas = d.plantas || [];
+      if (!plantas.length) return void ($("vazio").hidden = false);
+      $("caixa-busca").hidden = plantas.length < 6;
+      desenhar(plantas);
+      $("busca").addEventListener("input", filtrar);
+    })
+    .catch(() => { $("sem-indice").hidden = false; });
+
+  // O portal roda em outra porta; se ele estiver de pé, o botao vira "aberto".
+  const alvo = $("link-portal");
+  fetch(alvo.href + "/arquivos", { mode: "no-cors", cache: "no-store" })
+    .catch(() => {
+      alvo.classList.add("calmo");
+      alvo.textContent = "portal offline — iniciar portal.py";
+      alvo.removeAttribute("href");
+      alvo.style.cursor = "default";
+    });
+})();
+</script>
+</body>
+</html>
